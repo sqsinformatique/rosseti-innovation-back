@@ -1,0 +1,204 @@
+@baseURL = https://sqsinformatique-rosseti-innovation-back.ngrok.io
+@publicport = 
+@adminport = 
+@publicURL = {{baseURL}}:{{publicport}}
+@adminURL = {{baseURL}}:{{adminport}}
+@apiV = api/v1
+
+### Create user
+POST {{publicURL}}/{{apiV}}/user HTTP/1.1
+Content-Type: application/json
+Accept: application/json
+
+{
+	"user_password": "123456789",
+	"user_email": "test@test3.test",
+	"user_phone": "+791699999992",
+	"user_role": "MASTER"
+}
+
+### Get session
+// @name InternalClient
+POST {{publicURL}}/{{apiV}}/auth HTTP/1.1
+Content-Type: application/json
+Accept: application/json
+
+{
+	"user_password": "123456789",
+	"user_phone": "+79169999999"
+}
+
+### Get user by id
+GET {{publicURL}}/{{apiV}}/users/1 HTTP/1.1
+Cookie: rosseti-session=r27yuRpykNogv7zcqLYw2kUthBqm77qZ5rJZwZjrG7EzVyiI8G0lP9nZyvgaF2c46Z9xGpEHpALJtENTEA9PPd3HhNo9HT5WYCs4;
+
+### Create profile
+POST {{publicURL}}/{{apiV}}/profiles HTTP/1.1
+Content-Type: application/json
+Accept: application/json
+Cookie: rosseti-session=r27yuRpykNogv7zcqLYw2kUthBqm77qZ5rJZwZjrG7EzVyiI8G0lP9nZyvgaF2c46Z9xGpEHpALJtENTEA9PPd3HhNo9HT5WYCs4;
+
+{
+	"id": 10,
+	"user_first_name": "Иван",
+	"user_middle_name": "Васильевич",
+	"user_last_name": "Грозный",
+	"user_position": "инженер-электрик 1 кат.",
+	"user_company": "ПАО МОЭСК"
+}
+
+### Get profile
+GET {{publicURL}}/{{apiV}}/profiles/1 HTTP/1.1
+Cookie: rosseti-session=MxfdRjewVOHdK31it4vMOWCbEOwbPyGQ1tWWpTeNQMRea90EMmd2mkvYw7itvF0KLE2Xl9kpm7mB1JV6YRR6JWoj8ExEQdMo7F1N;
+
+### Search profile by name
+GET {{publicURL}}/{{apiV}}/profilessearch
+Content-Type: application/json
+Accept: application/json
+Cookie: rosseti-session=r27yuRpykNogv7zcqLYw2kUthBqm77qZ5rJZwZjrG7EzVyiI8G0lP9nZyvgaF2c46Z9xGpEHpALJtENTEA9PPd3HhNo9HT5WYCs4;
+
+{
+	"value":"ге"
+}
+
+### Create order
+POST {{publicURL}}/{{apiV}}/orders
+Content-Type: application/json
+Accept: application/json
+Cookie: rosseti-session=r27yuRpykNogv7zcqLYw2kUthBqm77qZ5rJZwZjrG7EzVyiI8G0lP9nZyvgaF2c46Z9xGpEHpALJtENTEA9PPd3HhNo9HT5WYCs4;
+
+{
+	"object_id": 1,
+	"tech_tasks" : {
+		"tasks":[
+				{"task_id": 1},
+				{"task_id": 2},
+		]
+	},
+	"superviser_id": 2,
+	"staff_id": 3
+}
+
+### Get order by id
+GET {{publicURL}}/{{apiV}}/orders/1
+Content-Type: application/json
+Accept: application/json
+Cookie: rosseti-session=r27yuRpykNogv7zcqLYw2kUthBqm77qZ5rJZwZjrG7EzVyiI8G0lP9nZyvgaF2c46Z9xGpEHpALJtENTEA9PPd3HhNo9HT5WYCs4;
+
+### Get orders for user
+GET {{publicURL}}/{{apiV}}/orders/user/3
+Content-Type: application/json
+Accept: application/json
+Cookie: rosseti-session=r27yuRpykNogv7zcqLYw2kUthBqm77qZ5rJZwZjrG7EzVyiI8G0lP9nZyvgaF2c46Z9xGpEHpALJtENTEA9PPd3HhNo9HT5WYCs4;
+
+### Sign order by supervisor
+POST {{publicURL}}/{{apiV}}/orders/1/signsupervisor
+Content-Type: application/json
+Accept: application/json
+Cookie: rosseti-session=r27yuRpykNogv7zcqLYw2kUthBqm77qZ5rJZwZjrG7EzVyiI8G0lP9nZyvgaF2c46Z9xGpEHpALJtENTEA9PPd3HhNo9HT5WYCs4;
+
+### Sign order by staff
+POST {{publicURL}}/{{apiV}}/orders/1/signstaff
+Content-Type: application/json
+Accept: application/json
+Cookie: rosseti-session=r27yuRpykNogv7zcqLYw2kUthBqm77qZ5rJZwZjrG7EzVyiI8G0lP9nZyvgaF2c46Z9xGpEHpALJtENTEA9PPd3HhNo9HT5WYCs4;
+
+### Create object
+POST {{publicURL}}/{{apiV}}/objects
+Content-Type: application/json
+Accept: application/json
+Cookie: rosseti-session=r27yuRpykNogv7zcqLYw2kUthBqm77qZ5rJZwZjrG7EzVyiI8G0lP9nZyvgaF2c46Z9xGpEHpALJtENTEA9PPd3HhNo9HT5WYCs4;
+
+{
+	"object_address": "г. Москва, ул. Василия Петушкова, вл. 3А",
+	"object_name": "PS220/110/10_220/20" 
+}
+
+### Get object by id
+GET {{publicURL}}/{{apiV}}/objects/1
+Content-Type: application/json
+Accept: application/json
+Cookie: rosseti-session=r27yuRpykNogv7zcqLYw2kUthBqm77qZ5rJZwZjrG7EzVyiI8G0lP9nZyvgaF2c46Z9xGpEHpALJtENTEA9PPd3HhNo9HT5WYCs4;
+
+### Search object by name
+GET {{publicURL}}/{{apiV}}/objectssearch
+Content-Type: application/json
+Accept: application/json
+Cookie: rosseti-session=r27yuRpykNogv7zcqLYw2kUthBqm77qZ5rJZwZjrG7EzVyiI8G0lP9nZyvgaF2c46Z9xGpEHpALJtENTEA9PPd3HhNo9HT5WYCs4;
+
+{
+	"value":"ВЛ"
+}
+
+### Create acts
+POST {{publicURL}}/{{apiV}}/acts
+Content-Type: application/json
+Accept: application/json
+Cookie: rosseti-session=r27yuRpykNogv7zcqLYw2kUthBqm77qZ5rJZwZjrG7EzVyiI8G0lP9nZyvgaF2c46Z9xGpEHpALJtENTEA9PPd3HhNo9HT5WYCs4;
+
+{
+	"staff_id" : 3,
+	"superviser_id": 2,
+	"object_id": 1,
+	"review_id": 1
+}
+
+### Get act by id
+GET {{publicURL}}/{{apiV}}/acts/1
+Content-Type: application/json
+Accept: application/json
+Cookie: rosseti-session=r27yuRpykNogv7zcqLYw2kUthBqm77qZ5rJZwZjrG7EzVyiI8G0lP9nZyvgaF2c46Z9xGpEHpALJtENTEA9PPd3HhNo9HT5WYCs4;
+
+### Get acts by staff id
+GET {{publicURL}}/{{apiV}}/acts/staff/2
+Content-Type: application/json
+Accept: application/json
+Cookie: rosseti-session=r27yuRpykNogv7zcqLYw2kUthBqm77qZ5rJZwZjrG7EzVyiI8G0lP9nZyvgaF2c46Z9xGpEHpALJtENTEA9PPd3HhNo9HT5WYCs4;
+
+### Get acts by superviser id
+GET {{publicURL}}/{{apiV}}/acts/superviser/1
+Content-Type: application/json
+Accept: application/json
+Cookie: rosseti-session=r27yuRpykNogv7zcqLYw2kUthBqm77qZ5rJZwZjrG7EzVyiI8G0lP9nZyvgaF2c46Z9xGpEHpALJtENTEA9PPd3HhNo9HT5WYCs4;
+
+### Search tech task
+GET {{publicURL}}/{{apiV}}/techtasksearch
+Content-Type: application/json
+Accept: application/json
+Cookie: rosseti-session=r27yuRpykNogv7zcqLYw2kUthBqm77qZ5rJZwZjrG7EzVyiI8G0lP9nZyvgaF2c46Z9xGpEHpALJtENTEA9PPd3HhNo9HT5WYCs4;
+
+{
+	"value":"не"
+}
+
+### Search object detail
+GET {{publicURL}}/{{apiV}}/objectsdetailsearch
+Content-Type: application/json
+Accept: application/json
+Cookie: rosseti-session=r27yuRpykNogv7zcqLYw2kUthBqm77qZ5rJZwZjrG7EzVyiI8G0lP9nZyvgaF2c46Z9xGpEHpALJtENTEA9PPd3HhNo9HT5WYCs4;
+
+{
+	"value": "про",
+	"ext_filter": {
+		"object_id": 1
+	}
+}
+
+### Search defect
+GET {{publicURL}}/{{apiV}}/defectsearch
+Content-Type: application/json
+Accept: application/json
+Cookie: rosseti-session=r27yuRpykNogv7zcqLYw2kUthBqm77qZ5rJZwZjrG7EzVyiI8G0lP9nZyvgaF2c46Z9xGpEHpALJtENTEA9PPd3HhNo9HT5WYCs4;
+
+{
+	"value": "отсу",
+	"ext_filter": {
+		"element_type": 1
+	}
+}
+
+### Get journal
+GET {{publicURL}}/{{apiV}}/journal
+Content-Type: application/json
+Accept: application/json
+Cookie: rosseti-session=r27yuRpykNogv7zcqLYw2kUthBqm77qZ5rJZwZjrG7EzVyiI8G0lP9nZyvgaF2c46Z9xGpEHpALJtENTEA9PPd3HhNo9HT5WYCs4;

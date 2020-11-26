@@ -1,0 +1,37 @@
+<html>
+
+<head>
+    <title>Centrifugo quick start</title>
+</head>
+
+<body>
+    <div id="message">-</div>
+    <div id="userID">-</div>
+    <script src="https://cdn.jsdelivr.net/gh/centrifugal/centrifuge-js@2.6.2/dist/centrifuge.min.js"></script>
+    <script type="text/javascript">
+        const container = document.getElementById('message')
+        const userID = document.getElementById('userID')
+        const centrifuge = new Centrifuge("ws://localhost:8000/connection/websocket");
+        // Идентификатор сессии, получаем при авторизации
+        centrifuge.setConnectData({ 'session': '9esukDVDyaO4H6tym0YQ7HLSCt81gI7YcB3mvWJFKnyzKN4KTR9RJJF3Wwp45xY1t7SlQW3OhxXd9FMMgtCkykwLdsMCYOCGn5bO' })
+
+        centrifuge.on('connect', function (ctx) {
+            console.log("connected", ctx);
+        });
+
+        centrifuge.on('disconnect', function (ctx) {
+            console.log("disconnected", ctx);
+        });
+
+        centrifuge.subscribe("channel", function (ctx) {
+            container.innerHTML = ctx.data.message;
+            userID.innerHTML = ctx.data.sender;
+            document.title = ctx.data.message;
+            console.log(ctx.data.message)
+        });
+
+        centrifuge.connect();
+    </script>
+</body>
+
+</html>

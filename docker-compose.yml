@@ -1,0 +1,43 @@
+version: "3.3"
+
+services:
+  modgodb:
+    image: mongo:3.6.20-xenial
+    ports:
+      - "27017:27017"
+    env_file:
+      - variables.env
+
+  postgres:
+    image: postgres:12.3-alpine
+    ports:
+      - "5432:5432"
+    env_file:
+      - variables.env
+    volumes:
+      - "postgres-storage:/var/lib/postgresql/data"
+
+  centrifugo:
+    image: centrifugo/centrifugo:v2.8
+    ports:
+      - "8000:8000"
+      - "8100:8100"
+    env_file:
+      - variables.env
+
+  rosseti-innovation-back:
+    depends_on:
+      - modgodb
+      - postgres
+    build: ./
+    image: sqsinformatique/rosseti-innovation-back
+    env_file:
+      - variables.env
+    command: serve
+    ports:
+      - "9000:9000"
+      - "9100:9100"
+    restart: on-failure
+
+volumes:
+  postgres-storage:
