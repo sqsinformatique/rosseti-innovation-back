@@ -1,7 +1,7 @@
 version: "3.3"
 
 services:
-  modgodb:
+  mongodb:
     image: mongo:3.6.20-xenial
     ports:
       - "27017:27017"
@@ -27,7 +27,7 @@ services:
 
   rosseti-innovation-back:
     depends_on:
-      - modgodb
+      - mongodb
       - postgres
     build: ./
     image: sqsinformatique/rosseti-innovation-back

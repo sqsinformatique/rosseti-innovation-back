@@ -23,7 +23,7 @@
             console.log("disconnected", ctx);
         });
 
-        centrifuge.subscribe("channel", function (ctx) {
+        centrifuge.subscribe("123", function (ctx) {
             container.innerHTML = ctx.data.message;
             userID.innerHTML = ctx.data.sender;
             document.title = ctx.data.message;

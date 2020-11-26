@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog"
@@ -13,6 +14,7 @@ import (
 	"github.com/sqsinformatique/rosseti-innovation-back/internal/context"
 	"github.com/sqsinformatique/rosseti-innovation-back/internal/httpsrv"
 	"github.com/sqsinformatique/rosseti-innovation-back/models"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type empty struct{}
@@ -20,8 +22,10 @@ type empty struct{}
 type CentrifugoV1 struct {
 	log       zerolog.Logger
 	privateV1 *echo.Group
+	publicV1  *echo.Group
 	sessionV1 *sessionv1.SessionV1
 	config    *cfg.AppCfg
+	mongoDB   **mongo.Client
 }
 
 func NewCentrifugoV1(ctx *context.Context, sessionV1 *sessionv1.SessionV1) (*CentrifugoV1, error) {
@@ -32,11 +36,14 @@ func NewCentrifugoV1(ctx *context.Context, sessionV1 *sessionv1.SessionV1) (*Cen
 	c := &CentrifugoV1{}
 	c.log = ctx.GetPackageLogger(empty{})
 	c.privateV1 = ctx.GetHTTPGroup(httpsrv.PrivateSrv, httpsrv.V1)
+	c.publicV1 = ctx.GetHTTPGroup(httpsrv.PublicSrv, httpsrv.V1)
 	c.sessionV1 = sessionV1
 	c.config = ctx.Config
+	c.mongoDB = ctx.GetMongoDB()
 
 	c.privateV1.POST("/centrifugo/connect", c.AuthConnectHandler)
-	c.privateV1.POST("/centrifugo/publish", c.PublishHandler)
+	c.publicV1.POST("/centrifugo/publish", c.PublishHandler)
+	c.publicV1.GET("/centrifugo/chat/:id", c.GetHistoryHandler)
 
 	return c, nil
 }
@@ -73,6 +80,15 @@ func (c *CentrifugoV1) Publish(pub *models.Publish, userID int) error {
 
 	if resp.StatusCode != http.StatusOK {
 		return errors.New("failed handle request on centrinfugo side")
+	}
+	channelID, err := strconv.Atoi(pub.Channel)
+	if err != nil {
+		return err
+	}
+
+	err = c.SaveToDB(channelID, userID, "", pub.Message)
+	if err != nil {
+		return err
 	}
 
 	return nil

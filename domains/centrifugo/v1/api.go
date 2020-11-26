@@ -244,3 +244,43 @@ func (c *CentrifugoV1) PublishHandler(ec echo.Context) (err error) {
 		httpsrv.OkResult(),
 	)
 }
+
+func (c *CentrifugoV1) GetHistoryHandler(ec echo.Context) error {
+	if echoSwagger.IsBuildingSwagger(ec) {
+		echoSwagger.AddToSwagger(ec).
+			SetProduces("application/json").
+			SetDescription("getHistoryHandler").
+			SetSummary("Get chat history").
+			AddInPathParameter("id", "Chat id", reflect.Int64).
+			AddInHeaderParameter("Authorization", "Authorization header", reflect.String, true).
+			AddResponse(http.StatusOK, "OK", &ChatDataResult{Body: &models.ChatChannel{}})
+		return nil
+	}
+
+	// Main code of handler
+	hndlLog := logger.HandlerLogger(&c.log, ec)
+	chatID, err := strconv.ParseInt(ec.Param("id"), 10, 64)
+	if err != nil {
+		hndlLog.Err(err).Msgf("BAD REQUEST, id %s", ec.Param("id"))
+
+		return ec.JSON(
+			http.StatusBadRequest,
+			httpsrv.BadRequest(err),
+		)
+	}
+
+	chatData, err := c.GetChat(int(chatID))
+	if err != nil {
+		hndlLog.Err(err).Msgf("Failed get chat, id %s", ec.Param("id"))
+
+		return ec.JSON(
+			http.StatusBadRequest,
+			httpsrv.BadRequest(err),
+		)
+	}
+
+	return ec.JSON(
+		http.StatusOK,
+		ChatDataResult{Body: chatData},
+	)
+}

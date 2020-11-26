@@ -18,7 +18,7 @@ type AppCfg struct {
 	}
 
 	Mongo struct {
-		DSN           string `envconfig:"default=mongodb://localhost:27017"`
+		DSN           string `envconfig:"default=mongodb://mongodb:27017"`
 		ImageDB       string `envconfig:"default=images"`
 		InnovationsDB string `envconfig:"default=innovations"`
 		ChatDB        string `envconfig:"default=chat"`

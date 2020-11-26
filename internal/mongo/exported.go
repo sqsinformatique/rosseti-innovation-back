@@ -43,7 +43,7 @@ func (db *DB) Start() error {
 		db.log.Fatal().Err(err).Msgf("Failed to connect to Mongo database")
 	}
 
-	db.log.Info().Msg("Database connection established")
+	db.log.Info().Msg("Mongo Database connection established")
 
 	db.conn = dbConn
 	db.cancel = cancel

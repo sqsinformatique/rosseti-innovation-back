@@ -44,9 +44,9 @@ func serveHandler(cmd *cobra.Command, args []string) {
 		log.Fatal().Err(err).Msg("Failed create DB")
 	}
 
-	_, err = mongo.NewMongoDB(ctx)
+	Mongo, err := mongo.NewMongoDB(ctx)
 	if err != nil {
-		log.Fatal().Err(err).Msg("Failed create DB")
+		log.Fatal().Err(err).Msg("Failed create MongoDB")
 	}
 
 	// Initilize ORM
@@ -89,6 +89,10 @@ func serveHandler(cmd *cobra.Command, args []string) {
 	// Start connect
 	if err := DB.Start(); err != nil {
 		log.Fatal().Err(err).Msg("Failed connect to DB")
+	}
+
+	if err := Mongo.Start(); err != nil {
+		log.Fatal().Err(err).Msg("Failed connect to MongoDB")
 	}
 
 	// Start swagger
