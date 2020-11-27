@@ -14,17 +14,21 @@ type Role int
 
 const (
 	RestrictedUser Role = iota // default value
-	Electrician
-	Master
-	Engineer
+	User
+	Moderator
+	Expert
+	Lawyer
+	Business
 	Admin
 )
 
 var stringToRole = map[string]Role{
 	"RESTRICTED_USER": RestrictedUser,
-	"ELECTRICIAN":     Electrician,
-	"MASTER":          Master,
-	"ENGINEER":        Engineer,
+	"USER":            User,
+	"MODERATOR":       Moderator,
+	"EXPERT":          Expert,
+	"LAWYER":          Lawyer,
+	"BUSINESS":        Business,
 	"ADMIN":           Admin,
 }
 

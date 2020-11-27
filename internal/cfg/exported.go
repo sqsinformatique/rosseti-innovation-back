@@ -13,8 +13,12 @@ type AppCfg struct {
 		Enable bool `envconfig:"default=true"`
 	}
 
+	Elastic struct {
+		DSN string `envconfig:"default=http://elastic:9200"`
+	}
+
 	Centrifugo struct {
-		DSN string `envconfig:"default=http://localhost:8100"`
+		DSN string `envconfig:"default=http://centrifugo:8100"`
 	}
 
 	Mongo struct {

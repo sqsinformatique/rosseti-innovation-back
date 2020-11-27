@@ -25,10 +25,23 @@ services:
     env_file:
       - variables.env
 
+  elastic:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
+    environment:
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - elastic-storage:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+      - 9300:9300
+
   rosseti-innovation-back:
     depends_on:
       - mongodb
       - postgres
+      - elastic
     build: ./
     image: sqsinformatique/rosseti-innovation-back
     env_file:
@@ -41,3 +54,5 @@ services:
 
 volumes:
   postgres-storage:
+  elastic-storage:
+    driver: local

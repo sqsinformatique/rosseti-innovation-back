@@ -40,7 +40,7 @@ func NewUserV1(ctx *context.Context, orm *orm.ORM, sessionV1 *sessionv1.SessionV
 	u.publicV1.POST("/auth", u.authPostHandler)
 
 	u.publicV1.POST("/user", u.userPostHandler)
-	u.publicV1.GET("/users/:id", u.Introspect(u.userGetHandler, types.Electrician))
+	u.publicV1.GET("/users/:id", u.Introspect(u.userGetHandler, types.User))
 	u.publicV1.PUT("/users/:id", u.Introspect(u.UserPutHandler, types.Admin))
 	u.publicV1.PUT("/credentials/:id", u.CredsPutHandler)
 	u.publicV1.POST("/credentials", u.CredsPostHandler)

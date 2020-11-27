@@ -37,10 +37,10 @@ func NewProfileV1(ctx *context.Context, orm *orm.ORM, userV1 *userv1.UserV1) (*P
 	p.db = ctx.GetDatabase()
 	p.orm = orm
 
-	p.publicV1.POST("/profiles", p.userV1.Introspect(p.ProfilePostHandler, types.Electrician))
-	p.publicV1.GET("/profiles/:id", p.userV1.Introspect(p.ProfileGetHandler, types.Electrician))
-	p.publicV1.GET("/profilessearch", p.userV1.Introspect(p.ProfileSearchGetHandler, types.Electrician))
-	p.publicV1.PUT("/profiles/:id", p.userV1.Introspect(p.ProfilePutHandler, types.Electrician))
+	p.publicV1.POST("/profiles", p.userV1.Introspect(p.ProfilePostHandler, types.User))
+	p.publicV1.GET("/profiles/:id", p.userV1.Introspect(p.ProfileGetHandler, types.User))
+	p.publicV1.GET("/profilessearch", p.userV1.Introspect(p.ProfileSearchGetHandler, types.User))
+	p.publicV1.PUT("/profiles/:id", p.userV1.Introspect(p.ProfilePutHandler, types.User))
 	p.publicV1.DELETE("/profiles/:id", p.userV1.Introspect(p.ProfileDeleteHandler, types.Admin))
 
 	return p, nil

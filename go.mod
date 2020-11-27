@@ -3,6 +3,7 @@ module github.com/sqsinformatique/rosseti-innovation-back
 go 1.15
 
 require (
+	github.com/elastic/go-elasticsearch/v8 v8.0.0-20201104130540-2e1f801663c6
 	github.com/evanphx/json-patch v4.9.0+incompatible
 	github.com/google/uuid v1.1.2
 	github.com/jmoiron/sqlx v1.2.0

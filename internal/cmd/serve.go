@@ -7,12 +7,14 @@ import (
 	"syscall"
 
 	centrifugov1 "github.com/sqsinformatique/rosseti-innovation-back/domains/centrifugo/v1"
+	innovationv1 "github.com/sqsinformatique/rosseti-innovation-back/domains/innovation/v1"
 	profilev1 "github.com/sqsinformatique/rosseti-innovation-back/domains/profile/v1"
 	sessionv1 "github.com/sqsinformatique/rosseti-innovation-back/domains/session/v1"
 	userv1 "github.com/sqsinformatique/rosseti-innovation-back/domains/user/v1"
 	"github.com/sqsinformatique/rosseti-innovation-back/internal/cfg"
 	"github.com/sqsinformatique/rosseti-innovation-back/internal/context"
 	"github.com/sqsinformatique/rosseti-innovation-back/internal/db"
+	"github.com/sqsinformatique/rosseti-innovation-back/internal/elastic"
 	"github.com/sqsinformatique/rosseti-innovation-back/internal/httpsrv"
 	"github.com/sqsinformatique/rosseti-innovation-back/internal/mongo"
 	"github.com/sqsinformatique/rosseti-innovation-back/internal/orm"
@@ -49,6 +51,11 @@ func serveHandler(cmd *cobra.Command, args []string) {
 		log.Fatal().Err(err).Msg("Failed create MongoDB")
 	}
 
+	Elastic, err := elastic.NewElasticDB(ctx)
+	if err != nil {
+		log.Fatal().Err(err).Msg("Failed create ElasticDB")
+	}
+
 	// Initilize ORM
 	ORM, err := orm.NewORM("production", ctx)
 	if err != nil {
@@ -76,7 +83,7 @@ func serveHandler(cmd *cobra.Command, args []string) {
 		log.Fatal().Err(err).Msg("Failed create UserV1")
 	}
 
-	_, err = profilev1.NewProfileV1(ctx, ORM, UserV1)
+	ProfileV1, err := profilev1.NewProfileV1(ctx, ORM, UserV1)
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed create ProfileV1")
 	}
@@ -86,6 +93,11 @@ func serveHandler(cmd *cobra.Command, args []string) {
 		log.Fatal().Err(err).Msg("Failed create CentrifugoV1")
 	}
 
+	_, err = innovationv1.NewInnovationV1(ctx, ProfileV1, ORM, UserV1)
+	if err != nil {
+		log.Fatal().Err(err).Msg("Failed create InnovationV1")
+	}
+
 	// Start connect
 	if err := DB.Start(); err != nil {
 		log.Fatal().Err(err).Msg("Failed connect to DB")
@@ -93,6 +105,10 @@ func serveHandler(cmd *cobra.Command, args []string) {
 
 	if err := Mongo.Start(); err != nil {
 		log.Fatal().Err(err).Msg("Failed connect to MongoDB")
+	}
+
+	if err := Elastic.Start(); err != nil {
+		log.Fatal().Err(err).Msg("Failed connect to ElasticDB")
 	}
 
 	// Start swagger

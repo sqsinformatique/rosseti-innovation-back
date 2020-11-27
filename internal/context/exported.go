@@ -1,6 +1,7 @@
 package context
 
 import (
+	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog"
@@ -13,6 +14,7 @@ type Context struct {
 	Log         zerolog.Logger
 	DB          **sqlx.DB
 	MongoDB     **mongo.Client
+	ElasticDB   **elasticsearch.Client
 	Config      *cfg.AppCfg
 	HTTPServers map[string]*echo.Echo
 	HTTPGroups  map[string]*echo.Group
@@ -34,6 +36,10 @@ func (ctx *Context) GetPackageLogger(emptyStruct interface{}) (log zerolog.Logge
 	return logger.InitializeLogger(&ctx.Log, emptyStruct)
 }
 
+func (ctx *Context) RegisterElasticDB(db **elasticsearch.Client) {
+	ctx.ElasticDB = db
+}
+
 func (ctx *Context) RegisterDatabase(db **sqlx.DB) {
 	ctx.DB = db
 }
@@ -48,6 +54,10 @@ func (ctx *Context) GetDatabase() **sqlx.DB {
 
 func (ctx *Context) GetMongoDB() **mongo.Client {
 	return ctx.MongoDB
+}
+
+func (ctx *Context) GetElasticDB() **elasticsearch.Client {
+	return ctx.ElasticDB
 }
 
 func (ctx *Context) RegisterHTTPServer(name string, srv *echo.Echo) {
