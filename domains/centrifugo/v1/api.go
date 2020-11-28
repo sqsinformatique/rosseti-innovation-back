@@ -450,8 +450,8 @@ func (c *CentrifugoV1) PutLikeThemes(ec echo.Context) (err error) {
 	if echoSwagger.IsBuildingSwagger(ec) {
 		echoSwagger.AddToSwagger(ec).
 			SetProduces("application/json").
-			SetDescription("GetLastActiveThemes").
-			SetSummary("Get last active themes").
+			SetDescription("PutLikeThemes").
+			SetSummary("Like themes").
 			AddInPathParameter("id", "Theme id", reflect.Int64).
 			AddResponse(http.StatusOK, "OK", httpsrv.OkResult())
 		return nil
