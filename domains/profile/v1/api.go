@@ -3,15 +3,22 @@ package profilev1
 import (
 	"io/ioutil"
 	"net/http"
+	"reflect"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
+	echoSwagger "github.com/sqsinformatique/rosseti-innovation-back/internal/echo-swagger"
 	"github.com/sqsinformatique/rosseti-innovation-back/internal/httpsrv"
 	"github.com/sqsinformatique/rosseti-innovation-back/internal/logger"
 	"github.com/sqsinformatique/rosseti-innovation-back/models"
 )
 
 func (o *ProfileV1) ProfilePostHandler(ec echo.Context) (err error) {
+	// Swagger
+	if echoSwagger.IsBuildingSwagger(ec) {
+		return nil
+	}
+
 	// Main code of handler
 	hndlLog := logger.HandlerLogger(&o.log, ec)
 
@@ -43,6 +50,18 @@ func (o *ProfileV1) ProfilePostHandler(ec echo.Context) (err error) {
 }
 
 func (o *ProfileV1) ProfileGetHandler(ec echo.Context) (err error) {
+	// Swagger
+	if echoSwagger.IsBuildingSwagger(ec) {
+		echoSwagger.AddToSwagger(ec).
+			SetProduces("application/json").
+			SetDescription("ProfileGetHandler").
+			SetSummary("Get profile").
+			AddInPathParameter("id", "Profile id", reflect.Int64).
+			AddInHeaderParameter("Authorization", "Authorization header", reflect.String, true).
+			AddResponse(http.StatusOK, "OK", &ProfileDataResult{Body: &models.Profile{}})
+		return nil
+	}
+
 	// Main code of handler
 	hndlLog := logger.HandlerLogger(&o.log, ec)
 
@@ -73,6 +92,11 @@ func (o *ProfileV1) ProfileGetHandler(ec echo.Context) (err error) {
 }
 
 func (o ProfileV1) ProfileSearchGetHandler(ec echo.Context) (err error) {
+	// Swagger
+	if echoSwagger.IsBuildingSwagger(ec) {
+		return nil
+	}
+
 	// Main code of handler
 	hndlLog := logger.HandlerLogger(&o.log, ec)
 
@@ -105,6 +129,11 @@ func (o ProfileV1) ProfileSearchGetHandler(ec echo.Context) (err error) {
 }
 
 func (o *ProfileV1) ProfilePutHandler(ec echo.Context) (err error) {
+	// Swagger
+	if echoSwagger.IsBuildingSwagger(ec) {
+		return nil
+	}
+
 	// Main code of handler
 	hndlLog := logger.HandlerLogger(&o.log, ec)
 
@@ -151,6 +180,11 @@ func (o *ProfileV1) ProfilePutHandler(ec echo.Context) (err error) {
 }
 
 func (o *ProfileV1) ProfileDeleteHandler(ec echo.Context) (err error) {
+	// Swagger
+	if echoSwagger.IsBuildingSwagger(ec) {
+		return nil
+	}
+
 	// Main code of handler
 	hndlLog := logger.HandlerLogger(&o.log, ec)
 

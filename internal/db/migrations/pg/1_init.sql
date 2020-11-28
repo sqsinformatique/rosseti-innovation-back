@@ -14,11 +14,11 @@ CREATE TABLE IF NOT EXISTS production.users (
 );
 
 INSERT INTO production.users (user_hash, user_email, user_phone, user_role) 
-VALUES ('15e2b0d3c33891ebb0f1ef609ec419420c20e320ce94c65fbc8c3312448eb225', 'test1@rosseti.ru', '+79169999999', 'MASTER');
+VALUES ('15e2b0d3c33891ebb0f1ef609ec419420c20e320ce94c65fbc8c3312448eb225', 'test1@rosseti.ru', '+79169999999', 'USER');
 INSERT INTO production.users (user_hash, user_email, user_phone, user_role) 
-VALUES ('15e2b0d3c33891ebb0f1ef609ec419420c20e320ce94c65fbc8c3312448eb225', 'test2@rosseti.ru', '+79169999998', 'ELECTRICIAN');
+VALUES ('15e2b0d3c33891ebb0f1ef609ec419420c20e320ce94c65fbc8c3312448eb225', 'test2@rosseti.ru', '+79169999998', 'MODERATOR');
 INSERT INTO production.users (user_hash, user_email, user_phone, user_role) 
-VALUES ('15e2b0d3c33891ebb0f1ef609ec419420c20e320ce94c65fbc8c3312448eb225', 'test3@rosseti.ru', '+79169999997', 'ENGINEER');
+VALUES ('15e2b0d3c33891ebb0f1ef609ec419420c20e320ce94c65fbc8c3312448eb225', 'test3@rosseti.ru', '+79169999997', 'EXPERT');
 INSERT INTO production.users (user_hash, user_email, user_phone, user_role) 
 VALUES ('15e2b0d3c33891ebb0f1ef609ec419420c20e320ce94c65fbc8c3312448eb225', 'test4@rosseti.ru', '+79169999996', 'ADMIN');
 

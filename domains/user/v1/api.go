@@ -17,6 +17,11 @@ import (
 )
 
 func (u *UserV1) userPostHandler(ec echo.Context) (err error) {
+	// Swagger
+	if echoSwagger.IsBuildingSwagger(ec) {
+		return nil
+	}
+
 	// Main code of handler
 	hndlLog := logger.HandlerLogger(&u.log, ec)
 
@@ -75,6 +80,11 @@ func (u *UserV1) userPostHandler(ec echo.Context) (err error) {
 }
 
 func (u *UserV1) userGetHandler(ec echo.Context) (err error) {
+	// Swagger
+	if echoSwagger.IsBuildingSwagger(ec) {
+		return nil
+	}
+
 	// Main code of handler
 	hndlLog := logger.HandlerLogger(&u.log, ec)
 
@@ -105,6 +115,11 @@ func (u *UserV1) userGetHandler(ec echo.Context) (err error) {
 }
 
 func (u *UserV1) UserPutHandler(ec echo.Context) (err error) {
+	// Swagger
+	if echoSwagger.IsBuildingSwagger(ec) {
+		return nil
+	}
+
 	// Main code of handler
 	hndlLog := logger.HandlerLogger(&u.log, ec)
 
@@ -151,6 +166,11 @@ func (u *UserV1) UserPutHandler(ec echo.Context) (err error) {
 }
 
 func (u *UserV1) CredsPutHandler(ec echo.Context) (err error) {
+	// Swagger
+	if echoSwagger.IsBuildingSwagger(ec) {
+		return nil
+	}
+
 	// Main code of handler
 	hndlLog := logger.HandlerLogger(&u.log, ec)
 
@@ -203,6 +223,11 @@ func (u *UserV1) CredsPutHandler(ec echo.Context) (err error) {
 }
 
 func (u *UserV1) CredsPostHandler(ec echo.Context) (err error) {
+	// Swagger
+	if echoSwagger.IsBuildingSwagger(ec) {
+		return nil
+	}
+
 	// Main code of handler
 	hndlLog := logger.HandlerLogger(&u.log, ec)
 
@@ -245,6 +270,11 @@ func (u *UserV1) CredsPostHandler(ec echo.Context) (err error) {
 }
 
 func (u *UserV1) UserDeleteHandler(ec echo.Context) (err error) {
+	// Swagger
+	if echoSwagger.IsBuildingSwagger(ec) {
+		return nil
+	}
+
 	// Main code of handler
 	hndlLog := logger.HandlerLogger(&u.log, ec)
 

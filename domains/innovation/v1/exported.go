@@ -52,13 +52,16 @@ func NewInnovationV1(ctx *context.Context,
 	inn.orm = orm
 
 	inn.publicV1.POST("/innovations", inn.userV1.Introspect(inn.innovationPostHandler, types.User))
+	inn.publicV1.PUT("/innovations/:id", inn.userV1.Introspect(inn.innovationPutHandler, types.User))
 	inn.publicV1.POST("/innovations/search", inn.userV1.Introspect(inn.searchPostHandler, types.User))
+	inn.publicV1.POST("/innovations/searchtitle", inn.userV1.Introspect(inn.searchTitlePostHandler, types.User))
+	inn.publicV1.POST("/innovations/:innid/images", inn.userV1.Introspect(inn.innovationPostImagesHandler, types.User))
+	inn.publicV1.GET("/innovations/:innid/images/:id", inn.userV1.Introspect(inn.innovationGetImageHandler, types.User))
+
 	// a.publicV1.GET("/innovations/:actid", a.userV1.Introspect(a.actGetHandler, types.User))
 	// a.publicV1.GET("/innovations/staff/:id", a.userV1.Introspect(a.innovationsByStaffIDGetHandler, types.User))
 	// a.publicV1.GET("/innovations/superviser/:id", a.userV1.Introspect(a.innovationsBySuperviserIDGetHandler, types.User))
 	// a.publicV1.PUT("/innovations/:actid", a.userV1.Introspect(a.ActPutHandler, types.User))
-	// a.publicV1.POST("/innovations/:actid/images", a.userV1.Introspect(a.actPostImagesHandler, types.User))
-	// a.publicV1.GET("/innovations/:actid/images/:id", a.userV1.Introspect(a.actGetImageHandler, types.User))
 	// a.publicV1.DELETE("/innovations/:actid", a.userV1.Introspect(a.ActDeleteHandler, types.Moderator))
 	// a.publicV1.POST("/innovations/:actid/signsupervisor", a.userV1.Introspect(a.innovationsignSuperviserPostHandler, types.Moderator))
 	// a.publicV1.POST("/innovations/:actid/signstaff", a.userV1.Introspect(a.innovationsignStaffPostHandler, types.User))

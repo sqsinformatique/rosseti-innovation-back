@@ -1,5 +1,7 @@
 package models
 
+import "github.com/sqsinformatique/rosseti-innovation-back/types"
+
 // CentrifugoIntrospection contains an access token's session data as specified by Centrifugo documentation, see:
 // https://centrifugal.github.io/centrifugo/server/proxy/#connect-proxy
 // swagger:model centrifugoOAuth2TokenIntrospection
@@ -49,4 +51,52 @@ type CentrifugoParams struct {
 type CentrifugoAPIRequest struct {
 	Method string
 	Params *CentrifugoParams
+}
+
+type Theme struct {
+	ID          int            `json:"id" db:"id"`
+	Direction   int            `json:"direction" db:"direction"`
+	Tags        string         `json:"tags" db:"tags"`
+	Title       string         `json:"title" db:"title"`
+	AuthorID    int            `json:"author_id" db:"author_id"`
+	LikeCounter int            `json:"like_counter" db:"like_counter"`
+	Meta        types.NullMeta `json:"meta" db:"meta"`
+	Timestamp
+}
+
+func (u *Theme) SQLParamsRequest() []string {
+	return []string{
+		"direction",
+		"title",
+		"tags",
+		"author_id",
+		"like_counter",
+		"meta",
+		"created_at",
+		"updated_at",
+		"deleted_at",
+	}
+}
+
+type Direction struct {
+	ID    int            `json:"id"`
+	Title string         `json:"title"`
+	Meta  types.NullMeta `json:"meta" db:"meta"`
+	Timestamp
+}
+
+func (u *Direction) SQLParamsRequest() []string {
+	return []string{
+		"id",
+		"title",
+		"meta",
+		"created_at",
+		"updated_at",
+		"deleted_at",
+	}
+}
+
+type DirectionDetailed struct {
+	Themes []Theme `json:"themes"`
+	Direction
 }

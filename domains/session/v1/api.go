@@ -4,11 +4,17 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	echoSwagger "github.com/sqsinformatique/rosseti-innovation-back/internal/echo-swagger"
 	"github.com/sqsinformatique/rosseti-innovation-back/internal/httpsrv"
 	"github.com/sqsinformatique/rosseti-innovation-back/internal/logger"
 )
 
 func (s *SessionV1) SessionDeleteHandler(ec echo.Context) (err error) {
+	// Swagger
+	if echoSwagger.IsBuildingSwagger(ec) {
+		return nil
+	}
+
 	// Main code of handler
 	hndlLog := logger.HandlerLogger(&s.log, ec)
 

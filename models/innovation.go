@@ -7,6 +7,7 @@ type Innovation struct {
 	AuthorID    int            `json:"author_id" db:"author_id"`
 	Title       string         `json:"title" db:"title"`
 	Tags        string         `json:"tags" db:"tags"`
+	Problem     string         `json:"problem" db:"problem"`
 	Description string         `json:"descriptions" db:"descriptions"`
 	State       string         `json:"state" db:"state"`
 	Meta        types.NullMeta `json:"meta" db:"meta"`
@@ -18,7 +19,9 @@ func (u *Innovation) SQLParamsRequest() []string {
 		"author_id",
 		"title",
 		"tags",
+		"problem",
 		"descriptions",
+		"effect",
 		"state",
 		"meta",
 		"created_at",

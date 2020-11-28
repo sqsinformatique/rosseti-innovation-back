@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/sqsinformatique/rosseti-innovation-back/internal/db"
 	"github.com/sqsinformatique/rosseti-innovation-back/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -66,4 +67,115 @@ func (c *CentrifugoV1) SaveToDB(chatID, userID int, name, message string) error 
 	}
 
 	return nil
+}
+
+func (c *CentrifugoV1) CreateTheme(request *models.Theme) (*models.Theme, error) {
+
+	request.CreateTimestamp()
+
+	result, err := c.orm.InsertInto("theme", request)
+	if err != nil {
+		return nil, err
+	}
+
+	return result.(*models.Theme), nil
+}
+
+func (c *CentrifugoV1) SelectAllDirections() (data *ArrayOfDirectionData, err error) {
+	conn := *c.db
+	if c.db == nil {
+		return nil, db.ErrDBConnNotEstablished
+	}
+
+	rows, err := conn.Queryx("select * from production.direction")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	data = &ArrayOfDirectionData{}
+
+	for rows.Next() {
+		var item models.Direction
+
+		err = rows.StructScan(&item)
+		if err != nil {
+			return nil, err
+		}
+
+		*data = append(*data, item)
+	}
+
+	return data, nil
+}
+
+func (c *CentrifugoV1) SelectThemesByDirection(id int) (data *ArrayOfThemesData, err error) {
+	conn := *c.db
+	if c.db == nil {
+		return nil, db.ErrDBConnNotEstablished
+	}
+
+	rows, err := conn.Queryx(conn.Rebind("select * from production.theme where direction=$1"), id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	data = &ArrayOfThemesData{}
+
+	for rows.Next() {
+		var item models.Theme
+
+		err = rows.StructScan(&item)
+		if err != nil {
+			return nil, err
+		}
+
+		*data = append(*data, item)
+	}
+
+	return data, nil
+}
+
+func (c *CentrifugoV1) SelectLastActiveThemes() (data *ArrayOfThemesData, err error) {
+	conn := *c.db
+	if c.db == nil {
+		return nil, db.ErrDBConnNotEstablished
+	}
+
+	query := "("
+	i := 0
+	for k := range c.lastActiveThemesMap {
+		if i < len(c.lastActiveThemesMap)-1 {
+			query = query + k + ","
+		} else {
+			query = query + k
+		}
+		i++
+	}
+
+	query = query + ")"
+
+	c.log.Debug().Msgf("query: %s", "select * from production.theme where id in "+query)
+
+	rows, err := conn.Queryx("select * from production.theme where id in " + query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	data = &ArrayOfThemesData{}
+
+	for rows.Next() {
+		var item models.Theme
+
+		err = rows.StructScan(&item)
+		if err != nil {
+			return nil, err
+		}
+
+		*data = append(*data, item)
+	}
+
+	return data, nil
 }

@@ -239,6 +239,16 @@ func (c *CentrifugoV1) PublishHandler(ec echo.Context) (err error) {
 		)
 	}
 
+	err = c.AddLastActive(&pub)
+	if err != nil {
+		hndlLog.Err(err).Msg("FAILED ADD TO LAST ACTIVE")
+
+		return ec.JSON(
+			http.StatusInternalServerError,
+			httpsrv.InternalServerError(err),
+		)
+	}
+
 	return ec.JSON(
 		http.StatusOK,
 		httpsrv.OkResult(),
@@ -282,5 +292,156 @@ func (c *CentrifugoV1) GetHistoryHandler(ec echo.Context) error {
 	return ec.JSON(
 		http.StatusOK,
 		ChatDataResult{Body: chatData},
+	)
+}
+
+func (c *CentrifugoV1) CreateThemeHandler(ec echo.Context) (err error) {
+	if echoSwagger.IsBuildingSwagger(ec) {
+		echoSwagger.AddToSwagger(ec).
+			SetProduces("application/json").
+			SetDescription("CreateThemeHandler").
+			SetSummary("Create Theme").
+			AddInBodyParameter("theme", "New Theme", &models.Theme{}, true).
+			AddInHeaderParameter("Authorization", "Authorization header", reflect.String, true).
+			AddResponse(http.StatusOK, "OK", &ThemeDataResult{Body: &models.Theme{}})
+		return nil
+	}
+
+	// Main code of handler
+	hndlLog := logger.HandlerLogger(&c.log, ec)
+
+	var theme models.Theme
+	err = ec.Bind(&theme)
+	if err != nil {
+		hndlLog.Err(err).Msgf("CREATE THEME FAILED %+v", &theme)
+
+		return ec.JSON(
+			http.StatusBadRequest,
+			httpsrv.BadRequest(err),
+		)
+	}
+
+	themeData, err := c.CreateTheme(&theme)
+	if err != nil {
+		hndlLog.Err(err).Msgf("CREATE THEME FAILED %+v", &theme)
+
+		return ec.JSON(
+			http.StatusConflict,
+			httpsrv.CreateFailed(err),
+		)
+	}
+
+	return ec.JSON(
+		http.StatusOK,
+		ThemeDataResult{Body: themeData},
+	)
+}
+
+func (c *CentrifugoV1) GetDirectionsHandler(ec echo.Context) (err error) {
+	if echoSwagger.IsBuildingSwagger(ec) {
+		echoSwagger.AddToSwagger(ec).
+			SetProduces("application/json").
+			SetDescription("GetDirectionsHandler").
+			SetSummary("Get directions").
+			AddInHeaderParameter("Authorization", "Authorization header", reflect.String, true).
+			AddResponse(http.StatusOK, "OK", &DirectionsDataResult{Body: &ArrayOfDirectionData{}})
+		return nil
+	}
+
+	// Main code of handler
+	hndlLog := logger.HandlerLogger(&c.log, ec)
+
+	directionsData, err := c.SelectAllDirections()
+	if err != nil {
+		hndlLog.Err(err).Msg("SELECT ALL DIRECTIONS FAILED")
+
+		return ec.JSON(
+			http.StatusConflict,
+			httpsrv.CreateFailed(err),
+		)
+	}
+
+	return ec.JSON(
+		http.StatusOK,
+		DirectionsDataResult{Body: directionsData},
+	)
+}
+
+func (c *CentrifugoV1) GetDirectionsDetailedHandler(ec echo.Context) (err error) {
+	if echoSwagger.IsBuildingSwagger(ec) {
+		echoSwagger.AddToSwagger(ec).
+			SetProduces("application/json").
+			SetDescription("GetDirectionsDetailedHandler").
+			SetSummary("Get directions").
+			AddInHeaderParameter("Authorization", "Authorization header", reflect.String, true).
+			AddResponse(http.StatusOK, "OK", &DirectionsDataResult{Body: &ArrayOfDirectionDetailedData{}})
+		return nil
+	}
+
+	// Main code of handler
+	hndlLog := logger.HandlerLogger(&c.log, ec)
+
+	directionsData, err := c.SelectAllDirections()
+	if err != nil {
+		hndlLog.Err(err).Msg("SELECT ALL DIRECTIONS FAILED")
+
+		return ec.JSON(
+			http.StatusConflict,
+			httpsrv.CreateFailed(err),
+		)
+	}
+
+	detailed := ArrayOfDirectionDetailedData{}
+	for _, v := range *directionsData {
+		item := models.DirectionDetailed{}
+		themes, err := c.SelectThemesByDirection(v.ID)
+		if err != nil {
+			hndlLog.Err(err).Msgf("SELECT THEMES FAILED, direction %d", v.ID)
+
+			return ec.JSON(
+				http.StatusConflict,
+				httpsrv.CreateFailed(err),
+			)
+		}
+
+		item.Themes = *themes
+		item.Direction = v
+
+		detailed = append(detailed, item)
+	}
+
+	return ec.JSON(
+		http.StatusOK,
+		DirectionsDataResult{Body: detailed},
+	)
+}
+
+func (c *CentrifugoV1) GetLastActiveThemes(ec echo.Context) (err error) {
+	if echoSwagger.IsBuildingSwagger(ec) {
+		echoSwagger.AddToSwagger(ec).
+			SetProduces("application/json").
+			SetDescription("GetLastActiveThemes").
+			SetSummary("Get last active themes").
+			AddInHeaderParameter("Authorization", "Authorization header", reflect.String, true).
+			AddResponse(http.StatusOK, "OK", &ArrayThemeDataResult{Body: &ArrayOfThemesData{}})
+		return nil
+	}
+
+	// Main code of handler
+	hndlLog := logger.HandlerLogger(&c.log, ec)
+
+	themesData, err := c.SelectLastActiveThemes()
+	if err != nil {
+		hndlLog.Err(err).Msgf("SELECT LAST ACTIVE THEMES FAILED, direction")
+
+		return ec.JSON(
+			http.StatusConflict,
+			httpsrv.CreateFailed(err),
+		)
+	}
+
+	return ec.JSON(
+		http.StatusOK,
+		ArrayThemeDataResult{Body: themesData},
 	)
 }

@@ -88,7 +88,7 @@ func serveHandler(cmd *cobra.Command, args []string) {
 		log.Fatal().Err(err).Msg("Failed create ProfileV1")
 	}
 
-	_, err = centrifugov1.NewCentrifugoV1(ctx, SessionV1)
+	_, err = centrifugov1.NewCentrifugoV1(ctx, ORM, SessionV1)
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed create CentrifugoV1")
 	}
