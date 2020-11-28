@@ -434,3 +434,77 @@ func (inn *InnovationV1) UpdateInnovationByID(id int64, patch *[]byte) (writeDat
 
 	return writeData, err
 }
+
+func (inn *InnovationV1) GetInnovationByUserID(id int64) (data *ArrayOfInnovationData, err error) {
+	conn := *inn.db
+	if inn.db == nil {
+		return nil, db.ErrDBConnNotEstablished
+	}
+
+	rows, err := conn.Queryx(conn.Rebind("select * from production.innovation where author_id=$1"), id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	data = &ArrayOfInnovationData{}
+
+	for rows.Next() {
+		var item models.Innovation
+
+		err = rows.StructScan(&item)
+		if err != nil {
+			return nil, err
+		}
+
+		*data = append(*data, item)
+	}
+
+	return data, nil
+}
+
+func (inn *InnovationV1) SelectAllInnovation() (data *ArrayOfInnovationData, err error) {
+	conn := *inn.db
+	if inn.db == nil {
+		return nil, db.ErrDBConnNotEstablished
+	}
+
+	rows, err := conn.Queryx("select * from production.innovation")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	data = &ArrayOfInnovationData{}
+
+	for rows.Next() {
+		var item models.Innovation
+
+		err = rows.StructScan(&item)
+		if err != nil {
+			return nil, err
+		}
+
+		*data = append(*data, item)
+	}
+
+	return data, nil
+}
+
+func (inn *InnovationV1) GetExpertByInnovationID(id int64) (data *models.InnovationExperts, err error) {
+	data = &models.InnovationExperts{}
+
+	conn := *inn.db
+	if inn.db == nil {
+		return nil, db.ErrDBConnNotEstablished
+	}
+
+	err = conn.Get(data, "select * from production.experts where id=$1", id)
+	if err != nil {
+		return nil, err
+	}
+
+	inn.log.Debug().Msgf("user %+v", data)
+
+	return
+}

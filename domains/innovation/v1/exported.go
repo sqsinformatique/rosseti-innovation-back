@@ -57,6 +57,8 @@ func NewInnovationV1(ctx *context.Context,
 	inn.publicV1.POST("/innovations/searchtitle", inn.userV1.Introspect(inn.searchTitlePostHandler, types.User))
 	inn.publicV1.POST("/innovations/:innid/images", inn.userV1.Introspect(inn.innovationPostImagesHandler, types.User))
 	inn.publicV1.GET("/innovations/:innid/images/:id", inn.userV1.Introspect(inn.innovationGetImageHandler, types.User))
+	inn.publicV1.GET("/innovations/:userid", inn.userV1.Introspect(inn.innovationGetByUserIDHandler, types.User))
+	inn.publicV1.GET("/innovationsdetailed", inn.userV1.Introspect(inn.innovationGetAllDetailedHandler, types.User))
 
 	// a.publicV1.GET("/innovations/:actid", a.userV1.Introspect(a.actGetHandler, types.User))
 	// a.publicV1.GET("/innovations/staff/:id", a.userV1.Introspect(a.innovationsByStaffIDGetHandler, types.User))

@@ -445,3 +445,42 @@ func (c *CentrifugoV1) GetLastActiveThemes(ec echo.Context) (err error) {
 		ArrayThemeDataResult{Body: themesData},
 	)
 }
+
+func (c *CentrifugoV1) PutLikeThemes(ec echo.Context) (err error) {
+	if echoSwagger.IsBuildingSwagger(ec) {
+		echoSwagger.AddToSwagger(ec).
+			SetProduces("application/json").
+			SetDescription("GetLastActiveThemes").
+			SetSummary("Get last active themes").
+			AddInPathParameter("id", "Theme id", reflect.Int64).
+			AddResponse(http.StatusOK, "OK", httpsrv.OkResult())
+		return nil
+	}
+
+	// Main code of handler
+	hndlLog := logger.HandlerLogger(&c.log, ec)
+	themeID, err := strconv.ParseInt(ec.Param("id"), 10, 64)
+	if err != nil {
+		hndlLog.Err(err).Msgf("BAD REQUEST, id %s", ec.Param("id"))
+
+		return ec.JSON(
+			http.StatusBadRequest,
+			httpsrv.BadRequest(err),
+		)
+	}
+
+	err = c.LikeTheme(themeID)
+	if err != nil {
+		hndlLog.Err(err).Msgf("FAILED LIKE THEME, id %s", ec.Param("id"))
+
+		return ec.JSON(
+			http.StatusBadRequest,
+			httpsrv.BadRequest(err),
+		)
+	}
+
+	return ec.JSON(
+		http.StatusOK,
+		httpsrv.OkResult(),
+	)
+}

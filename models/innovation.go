@@ -9,7 +9,7 @@ type Innovation struct {
 	Tags        string         `json:"tags" db:"tags"`
 	Problem     string         `json:"problem" db:"problem"`
 	Description string         `json:"descriptions" db:"descriptions"`
-	State       string         `json:"state" db:"state"`
+	State       types.Status   `json:"state" db:"state"`
 	Meta        types.NullMeta `json:"meta" db:"meta"`
 	Timestamp
 }
@@ -30,6 +30,13 @@ func (u *Innovation) SQLParamsRequest() []string {
 	}
 }
 
+type InnovationDetail struct {
+	Innovation
+	Author   *Profile                      `json:"author"`
+	CoAuthor *[]*InnovationCoAuthorsDetail `json:"co_authors"`
+	Expert   *Profile                      `json:"expert"`
+}
+
 type InnovationCoAuthors struct {
 	ID       int `json:"id" db:"id"`
 	AuthorID int `json:"author_id" db:"author_id"`
@@ -46,6 +53,11 @@ func (u *InnovationCoAuthors) SQLParamsRequest() []string {
 	}
 }
 
+type InnovationCoAuthorsDetail struct {
+	InnovationCoAuthors
+	Author *Profile `json:"author"`
+}
+
 type InnovationExperts struct {
 	ID       int `json:"id" db:"id"`
 	ExpertID int `json:"expert_id" db:"expert_id"`
@@ -60,6 +72,11 @@ func (u *InnovationExperts) SQLParamsRequest() []string {
 		"updated_at",
 		"deleted_at",
 	}
+}
+
+type InnovationExpertsDetail struct {
+	InnovationExperts
+	Expert *Profile
 }
 
 type InnovationFiles struct {

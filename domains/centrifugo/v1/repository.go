@@ -179,3 +179,13 @@ func (c *CentrifugoV1) SelectLastActiveThemes() (data *ArrayOfThemesData, err er
 
 	return data, nil
 }
+
+func (c *CentrifugoV1) LikeTheme(id int64) (err error) {
+	conn := *c.db
+	if c.db == nil {
+		return db.ErrDBConnNotEstablished
+	}
+
+	_, err = conn.Exec(conn.Rebind("update production.theme SET like_counter = like_counter + 1 where id=$1)"), id)
+	return err
+}

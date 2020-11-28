@@ -317,3 +317,116 @@ func (inn *InnovationV1) innovationGetImageHandler(ec echo.Context) (err error) 
 
 	return ec.Stream(http.StatusOK, mime.TypeByExtension(filepath.Ext(imageID)), gridFile)
 }
+
+func (inn *InnovationV1) innovationGetByUserIDHandler(ec echo.Context) (err error) {
+	if echoSwagger.IsBuildingSwagger(ec) {
+		echoSwagger.AddToSwagger(ec).
+			SetProduces("application/json").
+			SetDescription("GetDirectionsHandler").
+			SetSummary("Get directions").
+			AddInHeaderParameter("Authorization", "Authorization header", reflect.String, true).
+			AddResponse(http.StatusOK, "OK", &InnovationDataArrayResult{Body: &ArrayOfInnovationData{}})
+		return nil
+	}
+
+	// Main code of handler
+	hndlLog := logger.HandlerLogger(&inn.log, ec)
+
+	userID, err := strconv.ParseInt(ec.Param("id"), 10, 64)
+	if err != nil {
+		hndlLog.Err(err).Msgf("BAD REQUEST, id %s", ec.Param("id"))
+
+		return ec.JSON(
+			http.StatusBadRequest,
+			httpsrv.BadRequest(err),
+		)
+	}
+
+	directionsData, err := inn.GetInnovationByUserID(userID)
+	if err != nil {
+		hndlLog.Err(err).Msg("SELECT ALL DIRECTIONS FAILED")
+
+		return ec.JSON(
+			http.StatusConflict,
+			httpsrv.CreateFailed(err),
+		)
+	}
+
+	return ec.JSON(
+		http.StatusOK,
+		InnovationDataArrayResult{Body: directionsData},
+	)
+}
+
+func (inn *InnovationV1) innovationGetAllDetailedHandler(ec echo.Context) (err error) {
+	if echoSwagger.IsBuildingSwagger(ec) {
+		echoSwagger.AddToSwagger(ec).
+			SetProduces("application/json").
+			SetDescription("innovationGetAllDetailedHandler").
+			SetSummary("Get all innovation detail").
+			AddInHeaderParameter("Authorization", "Authorization header", reflect.String, true).
+			AddResponse(http.StatusOK, "OK", &InnovationDataArrayResult{Body: &ArrayOfInnovationData{}})
+		return nil
+	}
+
+	// Main code of handler
+	hndlLog := logger.HandlerLogger(&inn.log, ec)
+
+	innovationData, err := inn.SelectAllInnovation()
+	if err != nil {
+		hndlLog.Err(err).Msg("SELECT ALL INNOVATION FAILED")
+
+		return ec.JSON(
+			http.StatusConflict,
+			httpsrv.CreateFailed(err),
+		)
+	}
+
+	innovationDetailData := ArrayOfInnovationDetailData{}
+
+	for _, v := range *innovationData {
+		item := models.InnovationDetail{}
+		item.Innovation = v
+
+		author, err := inn.profilev1.GetProfileByID(int64(item.AuthorID))
+		if err != nil {
+			hndlLog.Err(err).Msgf("SELECT AUTHOR INNOVATION FAILED %+v", v)
+
+			return ec.JSON(
+				http.StatusConflict,
+				httpsrv.CreateFailed(err),
+			)
+		}
+
+		item.Author = author
+
+		expertForInnovation, err := inn.GetExpertByInnovationID(int64(item.ID))
+		if err != nil {
+			hndlLog.Err(err).Msgf("SELECT AUTHOR INNOVATION FAILED %+v", v)
+
+			return ec.JSON(
+				http.StatusConflict,
+				httpsrv.CreateFailed(err),
+			)
+		}
+
+		expert, err := inn.profilev1.GetProfileByID(int64(expertForInnovation.ID))
+		if err != nil {
+			hndlLog.Err(err).Msgf("SELECT EXPERT INNOVATION FAILED %+v", v)
+
+			return ec.JSON(
+				http.StatusConflict,
+				httpsrv.CreateFailed(err),
+			)
+		}
+
+		item.Expert = expert
+
+		innovationDetailData = append(innovationDetailData, item)
+	}
+
+	return ec.JSON(
+		http.StatusOK,
+		InnovationDataArrayResult{Body: &innovationDetailData},
+	)
+}

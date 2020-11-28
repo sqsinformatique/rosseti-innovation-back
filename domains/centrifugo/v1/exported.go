@@ -59,6 +59,7 @@ func NewCentrifugoV1(ctx *context.Context, orm *orm.ORM, sessionV1 *sessionv1.Se
 	c.publicV1.GET("/directionsdetailed", c.GetDirectionsDetailedHandler)
 	c.publicV1.GET("/directions", c.GetDirectionsHandler)
 	c.publicV1.GET("/lastactivethems", c.GetLastActiveThemes)
+	c.publicV1.PUT("/themes/:id/like", c.PutLikeThemes)
 
 	return c, nil
 }
