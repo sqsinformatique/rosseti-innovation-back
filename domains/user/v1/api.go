@@ -316,7 +316,7 @@ func (u *UserV1) authPostHandler(ec echo.Context) (err error) {
 		echoSwagger.AddToSwagger(ec).
 			SetProduces("application/json").
 			SetDescription("authPostHandler").
-			SetSummary("Authorization user").
+			SetSummary("Authorization user. Set -H \"Authorization: session PzcOiGMou6Mk1YjkskGjntcIcr7vIJ8Qu1hJTYak78nFwvmit5PZ9QQGkU4zy0K1zNvGvKSoaiWjR5xAYDyzB10L0KS7edXk1nJa\" in protected requests").
 			AddInBodyParameter("credentials", "User credentials", &models.Credentials{}, false).
 			AddResponse(http.StatusOK, "Test", &SessionDataResult{Body: &models.Session{}})
 		return nil
